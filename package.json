@@ -18,6 +18,10 @@
   "author": "Andrey Semenov",
   "license": "MIT",
   "nodemonConfig": {
+    "watch": [
+      "src",
+      "server.js"
+    ],
     "ignore": [
       "test/*",
       "docs/*",
@@ -34,6 +38,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@koa/cors": "^5.0.0",
     "@koa/router": "^12.0.1",
     "core-js": "^3.37.0",
     "koa": "^2.15.3",
