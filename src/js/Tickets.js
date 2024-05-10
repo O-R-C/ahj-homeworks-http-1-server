@@ -15,7 +15,7 @@ class Tickets {
    */
   constructor(ticketsFull = []) {
     this.#ticketsFull = ticketsFull
-    this.#tickets = this.getTickets()
+    this.#tickets = this.#getTickets()
   }
 
   get tickets() {
@@ -65,8 +65,8 @@ class Tickets {
    * Returns an array of short tickets.
    * @returns {Array.<Object>} The array of short tickets.
    */
-  getTickets() {
-    return this.#ticketsFull.map((ticket) => this.getShortTicket(ticket))
+  #getTickets() {
+    return this.#ticketsFull.map((ticket) => this.#getShortTicket(ticket))
   }
 
   /**
@@ -74,10 +74,14 @@ class Tickets {
    * @param {Ticket} ticket - The ticket.
    * @returns {Object} The short version of the ticket.
    */
-  getShortTicket(ticket) {
+  #getShortTicket(ticket) {
     // eslint-disable-next-line no-unused-vars
     const { _, ...ticketShort } = ticket
     return ticketShort
+  }
+
+  getTickets = async (ctx) => {
+    ctx.body = JSON.stringify(this.tickets)
   }
 }
 
