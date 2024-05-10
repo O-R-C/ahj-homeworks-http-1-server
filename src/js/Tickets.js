@@ -37,7 +37,7 @@ class Tickets {
    * Deletes a ticket with a given id from the collection.
    * @param {string} id - The id of the ticket to delete.
    */
-  deleteTicket(id) {
+  #deleteTicketEverywhere(id) {
     this.#ticketsFull = this.#deleteTicket(id, this.#ticketsFull)
     this.#tickets = this.#deleteTicket(id, this.#tickets)
   }
@@ -96,21 +96,24 @@ class Tickets {
    * @param {string} ctx.request.body.description - The description of the ticket.
    */
   createTicket = async (ctx) => {
-    const { method, name, description } = ctx.request.body
+    try {
+      const { method, name, description } = await ctx.request.body
 
-    if (method !== 'createTicket') {
-      this.#setStatusResponseError(ctx, 400, 'Wrong method')
+      if (method !== 'createTicket') {
+        throw new Error('Invalid method')
+      }
+
+      if (!name || !description) {
+        throw new Error('Name and description are required')
+      }
+
+      this.#addTicket({ name, description })
+      ctx.body = JSON.stringify(this.tickets)
+      this.#setStatusResponseSuccess(ctx, 201, 'Ticket created')
+    } catch (error) {
+      this.#setStatusResponseError(ctx, 400, error.message)
       return
     }
-
-    if (!name || !description) {
-      this.#setStatusResponseError(ctx, 400, 'Name and description are required')
-      return
-    }
-
-    this.#addTicket({ name, description })
-    ctx.body = JSON.stringify(this.tickets)
-    this.#setStatusResponseSuccess(ctx, 201, 'Ticket created')
   }
 
   /**
@@ -121,16 +124,21 @@ class Tickets {
    * @param {string} ctx.request.body.description - The description of the ticket.
    */
   updateTicket = async (ctx) => {
-    const { id, ...props } = JSON.parse(ctx.request.body)
+    try {
+      const id = ctx.params.id
+      const props = await JSON.parse(ctx.request.body)
 
-    if (!id) {
-      this.#setStatusResponseError(ctx, 400, 'Id is required')
+      if (!id) {
+        throw new Error('Id is required')
+      }
+
+      this.#updateTickets(id, props)
+
+      this.#setStatusResponseSuccess(ctx, 200, 'Ticket updated')
+    } catch (error) {
+      this.#setStatusResponseError(ctx, 400, error.message)
       return
     }
-
-    this.#updateTickets(id, props)
-
-    this.#setStatusResponseSuccess(ctx, 200, 'Ticket updated')
   }
 
   /**
@@ -152,6 +160,22 @@ class Tickets {
    */
   #updateTicket(id, props, tickets) {
     return tickets.map((ticket) => (ticket.id === id ? { ...ticket, ...props } : ticket))
+  }
+
+  deleteTicket = async (ctx) => {
+    try {
+      const id = await ctx.params.id
+
+      if (!id) {
+        throw new Error('Id is required')
+      }
+
+      this.#deleteTicketEverywhere(id)
+
+      this.#setStatusResponseSuccess(ctx, 200, 'Ticket deleted')
+    } catch (error) {
+      this.#setStatusResponseError(ctx, 400, error.message)
+    }
   }
 
   /**

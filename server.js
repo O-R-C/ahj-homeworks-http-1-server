@@ -27,7 +27,9 @@ router.get('/tickets', tickets.getTickets)
 
 router.post('/tickets', tickets.createTicket)
 
-router.patch('/tickets', tickets.updateTicket)
+router.patch('/tickets/:id', tickets.updateTicket)
+
+router.delete('/tickets/:id', tickets.deleteTicket)
 
 app.use(router.routes()).use(router.allowedMethods())
 
