@@ -21,13 +21,11 @@ app.use(
   }),
 )
 app.use(koaStatic(path.join(__dirname, 'public')))
-app.use(koaBody({ json: true, text: true, urlencoded: true }))
+app.use(koaBody({ json: true, text: true, urlencoded: true, multipart: true }))
 
 router.get('/tickets', tickets.getTickets)
 
-router.post('/test', (ctx) => {
-  ctx.body = JSON.stringify(tickets.tickets)
-})
+router.post('/tickets', tickets.createTicket)
 
 app.use(router.routes()).use(router.allowedMethods())
 

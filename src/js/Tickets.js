@@ -26,11 +26,12 @@ class Tickets {
    * Adds a new ticket to the collection.
    * @param {Object} tickets - The ticket.
    */
-  addTicket(options) {
+  #addTicket(options) {
+    console.log('🚀 ~ options:', options)
     const ticket = new Ticket(options)
 
     this.#ticketsFull.push(ticket)
-    this.#tickets.push(this.getShortTicket(ticket))
+    this.#tickets.push(this.#getShortTicket(ticket))
   }
 
   /**
@@ -81,6 +82,25 @@ class Tickets {
   }
 
   getTickets = async (ctx) => {
+    ctx.body = JSON.stringify(this.tickets)
+  }
+
+  createTicket = async (ctx) => {
+    const { method, name, description } = ctx.request.body
+
+    if (method !== 'createTicket') {
+      ctx.status = 400
+      ctx.body = 'Invalid method'
+      return
+    }
+
+    if (!name || !description) {
+      ctx.status = 400
+      ctx.body = 'Missing name or description'
+      return
+    }
+
+    this.#addTicket({ name, description })
     ctx.body = JSON.stringify(this.tickets)
   }
 }
