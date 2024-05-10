@@ -52,13 +52,28 @@ class Tickets {
     return tickets.filter((ticket) => ticket.id !== id)
   }
 
+  #getIndexes(id) {
+    return {
+      full: this.#getIndex(id, this.#ticketsFull),
+      short: this.#getIndex(id, this.#tickets),
+    }
+  }
+
+  #getIndex(id, tickets) {
+    return tickets.findIndex((ticket) => ticket.id === id)
+  }
+
   /**
    * Finds a ticket with a given id.
    * @param {string} id - The id of the ticket.
    * @returns {Ticket} The ticket with a given id or undefined.
    */
-  getTicket(id) {
+  getTicketFull(id) {
     return this.#ticketsFull.find((ticket) => ticket.id === id)
+  }
+
+  #getTicket(id) {
+    return this.#tickets.find((ticket) => ticket.id === id)
   }
 
   /**
@@ -76,7 +91,7 @@ class Tickets {
    */
   #getShortTicket(ticket) {
     // eslint-disable-next-line no-unused-vars
-    const { _, ...ticketShort } = ticket
+    const { description, ...ticketShort } = ticket
     return ticketShort
   }
 
@@ -86,6 +101,7 @@ class Tickets {
    */
   getTickets = async (ctx) => {
     ctx.body = JSON.stringify(this.tickets)
+    this.#setStatusResponseSuccess(ctx, 200, 'Tickets received')
   }
 
   /**
@@ -98,17 +114,40 @@ class Tickets {
     const { method, name, description } = ctx.request.body
 
     if (method !== 'createTicket') {
-      this.#setStatusResponse(ctx, 400, 'Wrong method')
+      this.#setStatusResponseError(ctx, 400, 'Wrong method')
       return
     }
 
     if (!name || !description) {
-      this.#setStatusResponse(ctx, 400, 'Name and description are required')
+      this.#setStatusResponseError(ctx, 400, 'Name and description are required')
       return
     }
 
     this.#addTicket({ name, description })
     ctx.body = JSON.stringify(this.tickets)
+    this.#setStatusResponseSuccess(ctx, 201, 'Ticket created')
+  }
+
+  updateTicket = async (ctx) => {
+    const { id, ...props } = JSON.parse(ctx.request.body)
+
+    if (!id) {
+      this.#setStatusResponseError(ctx, 400, 'Id is required')
+      return
+    }
+
+    this.#updateTickets(id, props)
+
+    this.#setStatusResponseSuccess(ctx, 200, 'Ticket updated')
+  }
+
+  #updateTickets(id, props) {
+    this.#ticketsFull = this.#updateTicket(id, props, this.#ticketsFull)
+    this.#tickets = this.#updateTicket(id, props, this.#tickets)
+  }
+
+  #updateTicket(id, props, tickets) {
+    return tickets.map((ticket) => (ticket.id === id ? { ...ticket, ...props } : ticket))
   }
 
   /**
@@ -116,9 +155,14 @@ class Tickets {
    * @param {Object} ctx - The koa context.
    * @param {string} message - The message to send.
    */
-  #setStatusResponse(ctx, status, message) {
+  #setStatusResponseError(ctx, status, message) {
     ctx.status = status
     ctx.body = message
+  }
+
+  #setStatusResponseSuccess(ctx, status, message) {
+    ctx.status = status
+    ctx.message = JSON.stringify(message)
   }
 }
 

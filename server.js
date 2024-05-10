@@ -27,6 +27,8 @@ router.get('/tickets', tickets.getTickets)
 
 router.post('/tickets', tickets.createTicket)
 
+router.patch('/tickets', tickets.updateTicket)
+
 app.use(router.routes()).use(router.allowedMethods())
 
 app.listen(3000)
