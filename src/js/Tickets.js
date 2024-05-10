@@ -27,7 +27,6 @@ class Tickets {
    * @param {Object} tickets - The ticket.
    */
   #addTicket(options) {
-    console.log('🚀 ~ options:', options)
     const ticket = new Ticket(options)
 
     this.#ticketsFull.push(ticket)
@@ -81,27 +80,45 @@ class Tickets {
     return ticketShort
   }
 
+  /**
+   * Returns an array of tickets.
+   * @param {Object} ctx - The koa context.
+   */
   getTickets = async (ctx) => {
     ctx.body = JSON.stringify(this.tickets)
   }
 
+  /**
+   * Creates a new ticket with the given name and description.
+   * @param {Object} ctx - The koa context.
+   * @param {string} ctx.request.body.name - The name of the ticket.
+   * @param {string} ctx.request.body.description - The description of the ticket.
+   */
   createTicket = async (ctx) => {
     const { method, name, description } = ctx.request.body
 
     if (method !== 'createTicket') {
-      ctx.status = 400
-      ctx.body = 'Invalid method'
+      this.#setStatus400(ctx, 'Wrong method')
       return
     }
 
     if (!name || !description) {
-      ctx.status = 400
-      ctx.body = 'Missing name or description'
+      this.#setStatus400(ctx, 'Name and description are required')
       return
     }
 
     this.#addTicket({ name, description })
     ctx.body = JSON.stringify(this.tickets)
+  }
+
+  /**
+   * Sets the status code and the body of the response.
+   * @param {Object} ctx - The koa context.
+   * @param {string} message - The message to send.
+   */
+  #setStatus400(ctx, message) {
+    ctx.status = 400
+    ctx.body = message
   }
 }
 
