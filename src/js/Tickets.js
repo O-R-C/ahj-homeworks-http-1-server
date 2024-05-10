@@ -98,12 +98,12 @@ class Tickets {
     const { method, name, description } = ctx.request.body
 
     if (method !== 'createTicket') {
-      this.#setStatus400(ctx, 'Wrong method')
+      this.#setStatusResponse(ctx, 400, 'Wrong method')
       return
     }
 
     if (!name || !description) {
-      this.#setStatus400(ctx, 'Name and description are required')
+      this.#setStatusResponse(ctx, 400, 'Name and description are required')
       return
     }
 
@@ -116,8 +116,8 @@ class Tickets {
    * @param {Object} ctx - The koa context.
    * @param {string} message - The message to send.
    */
-  #setStatus400(ctx, message) {
-    ctx.status = 400
+  #setStatusResponse(ctx, status, message) {
+    ctx.status = status
     ctx.body = message
   }
 }
