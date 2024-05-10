@@ -162,6 +162,11 @@ class Tickets {
     return tickets.map((ticket) => (ticket.id === id ? { ...ticket, ...props } : ticket))
   }
 
+  /**
+   * Deletes a ticket with the given id.
+   * @param {Object} ctx - The koa context.
+   * @param {string} ctx.params.id - The id of the ticket.
+   */
   deleteTicket = async (ctx) => {
     try {
       const id = await ctx.params.id
