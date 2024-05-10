@@ -24,7 +24,7 @@ app.use(koaStatic(path.join(__dirname, 'public')))
 app.use(koaBody({ json: true, text: true, urlencoded: true }))
 
 router.get('/', (ctx) => {
-  ctx.body = JSON.stringify('Hello World')
+  ctx.body = JSON.stringify(tickets.tickets)
 })
 
 router.post('/test', (ctx) => {
