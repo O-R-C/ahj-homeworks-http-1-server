@@ -52,17 +52,6 @@ class Tickets {
     return tickets.filter((ticket) => ticket.id !== id)
   }
 
-  #getIndexes(id) {
-    return {
-      full: this.#getIndex(id, this.#ticketsFull),
-      short: this.#getIndex(id, this.#tickets),
-    }
-  }
-
-  #getIndex(id, tickets) {
-    return tickets.findIndex((ticket) => ticket.id === id)
-  }
-
   /**
    * Finds a ticket with a given id.
    * @param {string} id - The id of the ticket.
@@ -70,10 +59,6 @@ class Tickets {
    */
   getTicketFull(id) {
     return this.#ticketsFull.find((ticket) => ticket.id === id)
-  }
-
-  #getTicket(id) {
-    return this.#tickets.find((ticket) => ticket.id === id)
   }
 
   /**
@@ -128,6 +113,13 @@ class Tickets {
     this.#setStatusResponseSuccess(ctx, 201, 'Ticket created')
   }
 
+  /**
+   * Updates a ticket with the given id and properties.
+   * @param {Object} ctx - The koa context.
+   * @param {string} ctx.request.body.id - The id of the ticket.
+   * @param {string} ctx.request.body.name - The name of the ticket.
+   * @param {string} ctx.request.body.description - The description of the ticket.
+   */
   updateTicket = async (ctx) => {
     const { id, ...props } = JSON.parse(ctx.request.body)
 
@@ -141,11 +133,23 @@ class Tickets {
     this.#setStatusResponseSuccess(ctx, 200, 'Ticket updated')
   }
 
+  /**
+   * Updates a ticket with the given id and properties.
+   * @param {string} id - The id of the ticket.
+   * @param {Object} props - The properties to update.
+   */
   #updateTickets(id, props) {
     this.#ticketsFull = this.#updateTicket(id, props, this.#ticketsFull)
     this.#tickets = this.#updateTicket(id, props, this.#tickets)
   }
 
+  /**
+   * Updates a ticket with the given id and properties.
+   * @param {string} id - The id of the ticket.
+   * @param {Object} props - The properties to update.
+   * @param {Array.<Ticket>} tickets - The array of tickets.
+   * @returns {Array.<Ticket>} The array of tickets with the updated ticket.
+   */
   #updateTicket(id, props, tickets) {
     return tickets.map((ticket) => (ticket.id === id ? { ...ticket, ...props } : ticket))
   }
@@ -160,6 +164,11 @@ class Tickets {
     ctx.body = message
   }
 
+  /**
+   * Sets the status code and the body of the response.
+   * @param {Object} ctx - The koa context.
+   * @param {string} message - The message to send.
+   */
   #setStatusResponseSuccess(ctx, status, message) {
     ctx.status = status
     ctx.message = JSON.stringify(message)
