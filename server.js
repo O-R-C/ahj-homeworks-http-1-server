@@ -5,9 +5,12 @@ const Router = require('@koa/router')
 const cors = require('@koa/cors')
 const koaStatic = require('koa-static')
 const { koaBody } = require('koa-body')
-const { Tickets } = require('./src/js/Tickets')
+const Tickets = require('./src/js/Tickets')
+const fakeData = require('./src/js/fakeData')
+console.log('🚀 ~ fakeData:', fakeData)
 
-const tickets = new Tickets()
+const tickets = new Tickets(fakeData)
+console.log('🚀 ~ tickets:', tickets.tickets)
 
 const app = new Koa()
 const router = new Router()
@@ -28,7 +31,7 @@ router.get('/', (ctx) => {
 })
 
 router.post('/test', (ctx) => {
-  ctx.body = JSON.stringify(ctx.request.body)
+  ctx.body = JSON.stringify(tickets.tickets)
 })
 
 app.use(router.routes()).use(router.allowedMethods())

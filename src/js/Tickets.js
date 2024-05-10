@@ -19,7 +19,7 @@ class Tickets {
   }
 
   get tickets() {
-    return this.tickets
+    return this.#tickets
   }
 
   /**
@@ -81,4 +81,4 @@ class Tickets {
   }
 }
 
-module.exports = { Tickets }
+module.exports = Tickets

@@ -19,7 +19,13 @@ class Ticket {
     this.id = uuidv4()
     this.name = name
     this.description = description
-    this.createdAt = new Date()
+    this.createdAt = new Date().toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    })
     this.status = false
   }
 }
