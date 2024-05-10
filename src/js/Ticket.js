@@ -1,4 +1,4 @@
-const uuid = require('uuid/v4')
+const { v4: uuidv4 } = require('uuid')
 
 /**
  * A class representing a ticket in the HelpDesk system.
@@ -16,7 +16,7 @@ class Ticket {
    * @return {void}
    */
   constructor({ name, description }) {
-    this.id = uuid()
+    this.id = uuidv4()
     this.name = name
     this.description = description
     this.createdAt = new Date()

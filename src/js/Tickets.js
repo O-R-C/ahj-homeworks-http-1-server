@@ -74,4 +74,4 @@ class Tickets {
   }
 }
 
-module.exports = Tickets
+module.exports = { Tickets }

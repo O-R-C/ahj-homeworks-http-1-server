@@ -5,6 +5,9 @@ const Router = require('@koa/router')
 const cors = require('@koa/cors')
 const koaStatic = require('koa-static')
 const { koaBody } = require('koa-body')
+const { Tickets } = require('./src/js/Tickets')
+
+const tickets = new Tickets()
 
 const app = new Koa()
 const router = new Router()
