@@ -57,7 +57,7 @@ class Tickets {
    * @param {string} id - The id of the ticket.
    * @returns {Ticket} The ticket with a given id or undefined.
    */
-  getTicketFull(id) {
+  #getTicketFull(id) {
     return this.#ticketsFull.find((ticket) => ticket.id === id)
   }
 
@@ -126,7 +126,8 @@ class Tickets {
   updateTicket = async (ctx) => {
     try {
       const id = ctx.params.id
-      const props = await JSON.parse(ctx.request.body)
+      const props = await ctx.request.body
+      props.status && (props.status = JSON.parse(props.status))
 
       if (!id) {
         throw new Error('Id is required')
@@ -178,6 +179,33 @@ class Tickets {
       this.#deleteTicketEverywhere(id)
 
       this.#setStatusResponseSuccess(ctx, 200, 'Ticket deleted')
+    } catch (error) {
+      this.#setStatusResponseError(ctx, 400, error.message)
+    }
+  }
+
+  /**
+   * Returns a description of a ticket.
+   * @param {Object} ctx - The koa context.
+   * @param {string} ctx.params.id - The id of the ticket.
+   */
+  getDescription = async (ctx) => {
+    try {
+      const id = await ctx.params.id
+
+      if (!id) {
+        throw new Error('Id is required')
+      }
+
+      const ticket = this.#getTicketFull(id)
+
+      if (!ticket) {
+        throw new Error('Ticket not found')
+      }
+
+      ctx.body = JSON.stringify(ticket.description)
+
+      this.#setStatusResponseSuccess(ctx, 200, 'Description received')
     } catch (error) {
       this.#setStatusResponseError(ctx, 400, error.message)
     }

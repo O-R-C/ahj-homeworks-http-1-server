@@ -25,6 +25,8 @@ app.use(koaBody({ json: true, text: true, urlencoded: true, multipart: true }))
 
 router.get('/tickets', tickets.getTickets)
 
+router.get('/tickets/:id', tickets.getDescription)
+
 router.post('/tickets', tickets.createTicket)
 
 router.patch('/tickets/:id', tickets.updateTicket)
